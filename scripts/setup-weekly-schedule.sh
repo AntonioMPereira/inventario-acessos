@@ -32,9 +32,24 @@ read -p "Deseja continuar? (s/n) " -n 1 -r
 echo ""
 
 if [[ $REPLY =~ ^[Ss]$ ]]; then
+    # Verificar se já existe entrada no crontab
+    if crontab -l 2>/dev/null | grep -q "$UPDATE_SCRIPT"; then
+        echo "⚠️  Agendamento já existe no crontab"
+        echo ""
+        crontab -l | grep "$UPDATE_SCRIPT"
+        echo ""
+        read -p "Deseja substituir? (s/n) " -n 1 -r
+        echo ""
+        if [[ ! $REPLY =~ ^[Ss]$ ]]; then
+            echo "❌ Operação cancelada"
+            exit 0
+        fi
+        # Remover entrada antiga
+        crontab -l 2>/dev/null | grep -v "$UPDATE_SCRIPT" | crontab -
+    fi
+    
     # Adicionar ao crontab
-    (crontab -l 2>/dev/null; echo "# Atualização semanal do inventário cloud - Toda segunda às 9:00") | crontab -
-    (crontab -l 2>/dev/null; echo "0 9 * * 1 $UPDATE_SCRIPT >> /var/log/inventory-update.log 2>&1") | crontab -
+    (crontab -l 2>/dev/null; echo "# Atualização semanal do inventário cloud - Toda segunda às 9:00"; echo "0 9 * * 1 $UPDATE_SCRIPT >> /var/log/inventory-update.log 2>&1") | crontab -
     
     echo "✅ Cron job adicionado com sucesso!"
     echo ""

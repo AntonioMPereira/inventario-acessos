@@ -110,15 +110,16 @@ fi
 echo ""
 echo "🔍 Verificando serviços self-hosted..."
 
-# Verificar Nifi
-if curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/nifi 2>/dev/null | grep -q "200\|302"; then
+# Verificar Nifi (porta 8443 HTTPS ou 8080 com path /nifi)
+if curl -s -o /dev/null -w "%{http_code}" http://localhost:8443/nifi 2>/dev/null | grep -q "200\|302" || \
+   curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/nifi 2>/dev/null | grep -q "200\|302"; then
     echo "   ✅ Apache Nifi: Ativo"
 else
     echo "   ⚠️  Apache Nifi: Não detectado"
 fi
 
-# Verificar Airflow
-if curl -s -o /dev/null -w "%{http_code}" http://localhost:8080 2>/dev/null | grep -q "200\|302"; then
+# Verificar Airflow (porta 8080 padrão)
+if curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/health 2>/dev/null | grep -q "200\|302"; then
     echo "   ✅ Apache Airflow: Ativo"
 else
     echo "   ⚠️  Apache Airflow: Não detectado"
@@ -142,8 +143,12 @@ echo ""
 echo "📝 Atualizando timestamp do inventário..."
 
 # Atualizar data no arquivo de inventário
-sed -i "s/\*\*Última atualização:\*\* .*/\*\*Última atualização:\*\* $(date +%Y-%m-%d)/" "$INVENTORY_FILE"
-echo "   ✅ Timestamp atualizado"
+CURRENT_DATE=$(date +%Y-%m-%d)
+if sed -i "s/^\*\*Última atualização:\*\* [0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}$/\*\*Última atualização:\*\* $CURRENT_DATE/" "$INVENTORY_FILE"; then
+    echo "   ✅ Timestamp atualizado para $CURRENT_DATE"
+else
+    echo "   ⚠️  Não foi possível atualizar o timestamp automaticamente"
+fi
 
 echo ""
 echo "========================================="

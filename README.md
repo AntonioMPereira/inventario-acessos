@@ -127,6 +127,9 @@ O `.gitignore` já está configurado para proteger:
 - Arquivos .env
 - Service account keys
 - Terraform state files
+- **Backups** - O diretório `backup/` é ignorado para evitar dados sensíveis e bloat do repositório. Backups são criados localmente apenas.
+
+> **Nota:** Backups do inventário são criados localmente pelo script de atualização mas não são versionados no Git. Se precisar de histórico, use o histórico do Git do arquivo INVENTORY.md.
 
 ## 📅 Processo de Atualização
 
