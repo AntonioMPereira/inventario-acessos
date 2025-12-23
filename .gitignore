@@ -1,0 +1,46 @@
+# Credentials and sensitive data
+credentials/
+*.key
+*.pem
+*.env
+.env.local
+secrets/
+*.secret
+
+# AWS credentials
+.aws/credentials
+.aws/config
+
+# GCP credentials
+gcp-keyfile.json
+service-account*.json
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+terraform.tfvars
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Backup files
+*.bak
+backup/
